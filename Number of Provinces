@@ -1,0 +1,62 @@
+class Solution {
+    public int findCircleNum(int[][] isConnected) {
+        var unionFind = new UnionFind(isConnected.length);
+
+        for (var row = 0; row < isConnected.length; row++) {
+            for (var col = 0; col < isConnected[row].length; col++) {
+                if (row != col && isConnected[row][col] == 1) {
+                    unionFind.union(row, col);
+                }
+            }
+        }
+
+        return unionFind.getNumberOfProvinces();
+    }
+
+    private static class UnionFind {
+        private final Map<Integer, Integer> childToParentMap;
+        private int numberOfProvinces;
+
+        public UnionFind(int numberOfProvinces) {
+            childToParentMap = new HashMap<>();
+
+            for (var i = 0; i < numberOfProvinces; i++) {
+                childToParentMap.put(i, i);
+            }
+
+            this.numberOfProvinces = numberOfProvinces;
+        }
+
+        public int findParent(int child) {
+            var parent = child;
+
+            while (parent != childToParentMap.get(parent)) {
+                parent = childToParentMap.get(parent);
+            }
+
+            while (parent != child) {
+                var nextParent = childToParentMap.get(child);
+                childToParentMap.put(child, parent);
+                child = nextParent;
+            }
+
+            return parent;
+        }
+
+        public void union(int firstChild, int secondChild) {
+            var parentOfFirstChild = findParent(firstChild);
+            var parentOfSecondChild = findParent(secondChild);
+
+            if (parentOfFirstChild == parentOfSecondChild) {
+                return;
+            }
+
+            childToParentMap.put(parentOfFirstChild, parentOfSecondChild);
+            this.numberOfProvinces--;
+        }
+
+        public int getNumberOfProvinces() {
+            return numberOfProvinces;
+        }
+    }
+}
