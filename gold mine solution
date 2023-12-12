@@ -1,0 +1,19 @@
+def Solution(x, y, n, m, M):
+    if x < 0 or x == n or y == m:
+        return 0
+
+    rightUpperDiagonal = Solution(x - 1, y + 1, n, m, M)
+    right = Solution(x, y + 1, n, m, M)
+    rightLowerDiagonal = Solution(x + 1, y + 1, n, m, M)
+
+    return M[x][y] + max(max(rightUpperDiagonal, rightLowerDiagonal), right)
+
+
+def maxGold(n, m, M):
+    maxGold = 0
+
+    for i in range(n):
+        goldCollected = Solution(i, 0, n, m, M)
+        maxGold = max(maxGold, goldCollected)
+
+    return maxGold
